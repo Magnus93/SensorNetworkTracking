@@ -27,7 +27,7 @@ make TARGET=z1 MOTES=/dev/ttyUSB0 client.upload
 
 ### Add dialout:
 ```
-sudo adduser admin dialout
+sudo adduser username dialout
 ```
 
 ### listen to USB0
