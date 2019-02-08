@@ -29,3 +29,18 @@ make TARGET=z1 MOTES=/dev/ttyUSB0 client.upload
 ```
 sudo adduser admin dialout
 ```
+
+### listen to USB0
+Goto the `src` folder
+Add execute permission to sh-file
+```
+chmod +x ./listen0.sh
+```
+
+Listen output from device
+```
+./listen0.sh
+```
+this will listen on USB0.
+
+
