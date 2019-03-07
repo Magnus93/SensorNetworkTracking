@@ -43,4 +43,13 @@ Listen output from device
 ```
 this will listen on USB0.
 
+### installing contiki on ubuntu
 
+First we need to install the necessary toolchain to start compiling the Z1 environment, basically we need the following libraries:
+
+    GCC (latest version is 4.4.4).
+    Binutils (latest version is 2.20.1)
+    Libc support.
+    Python-serial support (BSL). 
+    
+if it states that you are missing "python2" use sudo apt-get install python2.7-minimal
