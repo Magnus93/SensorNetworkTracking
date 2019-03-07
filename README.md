@@ -43,6 +43,19 @@ Listen output from device
 ```
 this will listen on USB0.
 
+
+### Listen with "make login"
+listen with:
+```sudo make TARGET=z1 login
+```
+
+If you are running on a 64-bit system then this command will have to be written:
+```
+sudo apt-get install libc6-i386
+```
+More info here if "make login" does not work:
+http://anrg.usc.edu/contiki/index.php/Troubleshooting
+
 ### installing contiki on ubuntu
 
 First we need to install the necessary toolchain to start compiling the Z1 environment, basically we need the following libraries:
