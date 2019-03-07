@@ -56,6 +56,10 @@ sudo apt-get install libc6-i386
 More info here if "make login" does not work:
 http://anrg.usc.edu/contiki/index.php/Troubleshooting
 
+To make target without ```sudo``` use:
+```sudo chmod 666 /dev/ttyUSB0
+```
+
 ### installing contiki on ubuntu
 
 First we need to install the necessary toolchain to start compiling the Z1 environment, basically we need the following libraries:
