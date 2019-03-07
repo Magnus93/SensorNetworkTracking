@@ -52,4 +52,6 @@ First we need to install the necessary toolchain to start compiling the Z1 envir
     Libc support.
     Python-serial support (BSL). 
     
-if it states that you are missing "python2" use sudo apt-get install python2.7-minimal
+if it states that you are missing "python2" use "sudo apt-get --reinstall install python-minimal"
+
+If it states that serial is not found use "sudo apt-get install python-serial python3-serial"
