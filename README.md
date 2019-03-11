@@ -37,9 +37,9 @@ make basestation
 make TARGET=z1 MOTES=/dev/ttyUSB0 client.upload
 ```
 or
-...
+```
 make TARGET=z1 MOTE=n client.upload (n is the n'th connected node)
-...
+```
 ### Add dialout:
 ```
 sudo adduser username dialout
