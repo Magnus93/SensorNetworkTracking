@@ -11,6 +11,18 @@ should find something like this:
 [ 4055.572591] usb 2-2.1: cp210x converter now attached to ttyUSB0
 ```
 
+or
+
+
+```
+motelist
+```
+if the above doesn't work try 
+
+```
+sudo apt-get install tinyos-tools
+```
+
 ### compile code
 ```
 make client
