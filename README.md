@@ -100,7 +100,12 @@ sudo chmod 666 /dev/ttyUSB0
 
 ### COOJA TROUBLES
 
-if ant run does not work  Adding the following line made Cooja start and simulate:
+if 
+```
+ant run 
+```
+
+does not work  adding the following lines in build.xml made Cooja start and simulate:
 ```
 <compilerarg line="--add-modules java.xml.bind"/>
 ```
