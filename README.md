@@ -100,25 +100,20 @@ sudo chmod 666 /dev/ttyUSB0
 
 ### COOJA TROUBLES
 
-if 
-```
-ant run 
-```
-
-does not work  adding the following lines in build.xml made Cooja start and simulate:
+If `ant run` does not work adding the following lines in `contiki/tools/cooja/build.xml` made Cooja start and simulate:
 ```
 <compilerarg line="--add-modules java.xml.bind"/>
 ```
 
 Hence, the final compile command would be:
 
-```
+```diff
 <target name="compile" depends="init">
     <mkdir dir="${build}"/>
     <javac srcdir="${java}" destdir="${build}" debug="on"
            includeantruntime="false"
            encoding="utf-8">
-      <compilerarg line="--add-modules java.xml.bind"/>
++      <compilerarg line="--add-modules java.xml.bind"/>
       <classpath>
         <pathelement path="."/>
         <pathelement location="lib/jdom.jar"/>
