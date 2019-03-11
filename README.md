@@ -36,6 +36,9 @@ make basestation
 ```
 make TARGET=z1 MOTES=/dev/ttyUSB0 client.upload
 ```
+or
+...
+make TARGET=z1 MOTE=n client.upload (n is the n'th connected node)
 
 ### Add dialout:
 ```
@@ -60,6 +63,7 @@ this will listen on USB0.
 listen with:
 ```
 sudo make TARGET=z1 login
+sudo make TARGET=z1 MOTE=n login (to listen to the n'th connected node)
 ```
 
 If you are running on a 64-bit system then this command will have to be written:
