@@ -98,4 +98,31 @@ To make target without `sudo` use:
 sudo chmod 666 /dev/ttyUSB0
 ```
 
+### COOJA TROUBLES
+
+if ant run does not work  Adding the following line made Cooja start and simulate:
+```
+<compilerarg line="--add-modules java.xml.bind"/>
+```
+
+Hence, the final compile command would be:
+
+```
+<target name="compile" depends="init">
+    <mkdir dir="${build}"/>
+    <javac srcdir="${java}" destdir="${build}" debug="on"
+           includeantruntime="false"
+           encoding="utf-8">
+      <compilerarg line="--add-modules java.xml.bind"/>
+      <classpath>
+        <pathelement path="."/>
+        <pathelement location="lib/jdom.jar"/>
+        <pathelement location="lib/log4j.jar"/>
+        <pathelement location="lib/jsyntaxpane.jar"/>
+        <pathelement location="lib/swingx-all-1.6.4.jar"/>
+      </classpath>
+    </javac>
+  </target>
+  ```
+
 
