@@ -1,7 +1,24 @@
 # SensorNetworkTracking
 
+## installing contiki on ubuntu
 
-### See USB-port connections
+First we need to install the necessary toolchain to start compiling the Z1 environment, basically we need the following libraries:
+
+    GCC (latest version is 4.4.4).
+    Binutils (latest version is 2.20.1)
+    Libc support.
+    Python-serial support (BSL). 
+    
+if it states that you are missing python2" use `sudo apt-get --reinstall install python-minimal`
+
+If it states that serial is not found use `sudo apt-get install python-serial python3-serial`
+
+To install msp430:
+```
+sudo apt-get install gcc-msp430
+```
+
+## See USB-port connections
 ```
 dmesg | grep "tty"
 ```
@@ -23,7 +40,7 @@ if the above doesn't work try
 sudo apt-get install tinyos-tools
 ```
 
-### compile code
+## Compile code
 ```
 make client
 ```
@@ -32,7 +49,7 @@ or
 make basestation
 ```
 
-### Upload code
+## Upload code
 ```
 make TARGET=z1 MOTES=/dev/ttyUSB0 client.upload
 ```
@@ -40,7 +57,10 @@ or
 ```
 make TARGET=z1 MOTE=n client.upload (n is the n'th connected node)
 ```
-### Add dialout:
+
+## Listen to device
+
+### Add dialout (for listening):
 ```
 sudo adduser username dialout
 ```
@@ -78,21 +98,4 @@ To make target without `sudo` use:
 sudo chmod 666 /dev/ttyUSB0
 ```
 
-### installing contiki on ubuntu
-
-First we need to install the necessary toolchain to start compiling the Z1 environment, basically we need the following libraries:
-
-    GCC (latest version is 4.4.4).
-    Binutils (latest version is 2.20.1)
-    Libc support.
-    Python-serial support (BSL). 
-    
-if it states that you are missing python2" use `sudo apt-get --reinstall install python-minimal`
-
-If it states that serial is not found use `sudo apt-get install python-serial python3-serial`
-
-To install msp430:
-```
-sudo apt-get install gcc-msp430
-```
 
