@@ -38,6 +38,7 @@ static void recv_uc(struct unicast_conn *c, const linkaddr_t *from) {
 		}
 		avg_rssi = accumulator / RSSI_AMOUNT;
 	}
+	if (index > 100 * RSSI_AMOUNT) {index = RSSI_AMOUNT;}  // to not overflow, caution! dont set RSSI_AMOUNT to high!
 	printf("accumulator: %d\n",  accumulator);;
 	printf("index: %d\n", index);
 	printf("avg_rssi: %d \n", avg_rssi); 
