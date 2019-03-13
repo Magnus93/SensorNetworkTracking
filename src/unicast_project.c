@@ -10,14 +10,16 @@
 #include <stdio.h>
 #include "dev/cc2420/cc2420.h"
 
-#define TX_POWER 31
-
+#define TX_POWER 10
+#define OFFSET 10		// the RSSI power indication when placing two motes on top of eachother (Cooja)
+// The actual received + the offset. If at same location == 0
+#define RECEIVED_RSSI packetbuf_attr(PACKETBUF_ATTR_RSSI) + 10  
 PROCESS(unicast_process, "unicast");
 AUTOSTART_PROCESSES(&unicast_process);
 
 static void recv_uc(struct unicast_conn *c, const linkaddr_t *from) {
 	printf("unicast message received from %d.%d\n",from->u8[0], from->u8[1]);
-	printf("Received strength : %d \n",packetbuf_attr(PACKETBUF_ATTR_RSSI));   //PACKETBUF_ATTR_RSSI is unsigned integer
+	printf("Received strength : %d \n", RECEIVED_RSSI);   //PACKETBUF_ATTR_RSSI is unsigned integer
 }
 
 static void sent_uc(struct unicast_conn *c, int status, int num_tx) {
@@ -49,7 +51,7 @@ PROCESS_THREAD(unicast_process, ev, data)
 		PROCESS_WAIT_EVENT_UNTIL(etimer_expired(&et));
 		
 		packetbuf_copyfrom("Hello", 5);
-		addr.u8[0] = 38;
+		addr.u8[0] = 1;
 		addr.u8[1] = 0;
 		if(!linkaddr_cmp(&addr, &linkaddr_node_addr)) {
 			unicast_send(&uc, &addr);
