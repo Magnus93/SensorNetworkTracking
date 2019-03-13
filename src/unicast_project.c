@@ -8,7 +8,9 @@
 #include "contiki.h"
 #include "net/rime/rime.h"
 #include <stdio.h>
+#include "dev/cc2420/cc2420.h"
 
+#define TX_POWER 31
 
 PROCESS(unicast_process, "unicast");
 AUTOSTART_PROCESSES(&unicast_process);
@@ -23,7 +25,8 @@ static void sent_uc(struct unicast_conn *c, int status, int num_tx) {
 	if(linkaddr_cmp(dest, &linkaddr_null)) {
 		return;
 	}
-	printf("unicast message sent to %d.%d: status %d num_tx %d\n", dest->u8[0], dest->u8[1], status, num_tx);
+	printf("unicast message sent to %d.%d: status %d num_tx %d power (0-31) %d\n", 
+		dest->u8[0], dest->u8[1], status, num_tx, TX_POWER);
 }
 
 static const struct unicast_callbacks unicast_callbacks = {recv_uc, sent_uc};
@@ -36,7 +39,7 @@ PROCESS_THREAD(unicast_process, ev, data)
 	PROCESS_BEGIN();
 	
 	unicast_open(&uc, 146, &unicast_callbacks);
-	
+	cc2420_set_txpower(TX_POWER);
 	while(1) {
 		static struct etimer et;
 		linkaddr_t addr;
@@ -46,7 +49,7 @@ PROCESS_THREAD(unicast_process, ev, data)
 		PROCESS_WAIT_EVENT_UNTIL(etimer_expired(&et));
 		
 		packetbuf_copyfrom("Hello", 5);
-		addr.u8[0] = 63;
+		addr.u8[0] = 38;
 		addr.u8[1] = 0;
 		if(!linkaddr_cmp(&addr, &linkaddr_node_addr)) {
 			unicast_send(&uc, &addr);
