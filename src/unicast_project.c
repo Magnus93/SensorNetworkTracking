@@ -49,7 +49,7 @@ PROCESS_THREAD(unicast_process, ev, data)
 		PROCESS_WAIT_EVENT_UNTIL(etimer_expired(&et));
 		
 		packetbuf_copyfrom("Hello", 5);
-		addr.u8[0] = 38;
+		addr.u8[0] = 1;
 		addr.u8[1] = 0;
 		if(!linkaddr_cmp(&addr, &linkaddr_node_addr)) {
 			unicast_send(&uc, &addr);
