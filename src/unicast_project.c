@@ -10,10 +10,8 @@
 #include <stdio.h>
 #include "dev/cc2420/cc2420.h"
 
-#define TX_POWER 10
-#define OFFSET 10		// the RSSI power indication when placing two motes on top of eachother (Cooja)
-// The actual received + the offset. If at same location == 0
-#define RECEIVED_RSSI packetbuf_attr(PACKETBUF_ATTR_RSSI) + 10    //PACKETBUF_ATTR_RSSI is unsigned integer
+#define TX_POWER 31
+#define OFFSET 10		// the RSSI power indication when placing two motes on top of eachother (Cooja) 
 #define RSSI_AMOUNT 10	// the number of RSSI readings to store in a buffer for the moving average
 
 PROCESS(unicast_process, "unicast");
@@ -24,24 +22,16 @@ static int index = 0;			// keeps track of the next location to store data in fro
 int avg_rssi = 0;
 int accumulator = 0;
 
+void store_RSSI_value(int rssi_value);
+void calculate_RSSI_average();
+
 static void recv_uc(struct unicast_conn *c, const linkaddr_t *from) {
 	printf("unicast message received from %d.%d\n",from->u8[0], from->u8[1]);
-	rssi_readings[index % RSSI_AMOUNT] = RECEIVED_RSSI;		// store the latest reading at the oldest value
-	index++;
-	if (index >= RSSI_AMOUNT) {
-		accumulator = 0;
+	int received_rssi = packetbuf_attr(PACKETBUF_ATTR_RSSI);
 
-		int i;
-		for (i = 0; i < RSSI_AMOUNT; ++i)
-		{
-			accumulator += rssi_readings[i];
-		}
-		avg_rssi = accumulator / RSSI_AMOUNT;
-	}
-	if (index > 100 * RSSI_AMOUNT) {index = RSSI_AMOUNT;}  // to not overflow, caution! dont set RSSI_AMOUNT to high!
-	printf("accumulator: %d\n",  accumulator);;
-	printf("index: %d\n", index);
-	printf("avg_rssi: %d \n", avg_rssi); 
+	store_RSSI_value(received_rssi);
+	calculate_RSSI_average();
+	
 }
 
 static void sent_uc(struct unicast_conn *c, int status, int num_tx) {
@@ -53,6 +43,33 @@ static void sent_uc(struct unicast_conn *c, int status, int num_tx) {
 		dest->u8[0], dest->u8[1], status, num_tx, TX_POWER);
 }
 
+void store_RSSI_value(int rssi_value) {
+	printf("index: %d\n", index);
+	rssi_readings[index % RSSI_AMOUNT] = rssi_value + OFFSET;		// store the latest reading at the oldest value
+	index++;
+	if (index >= 100 * RSSI_AMOUNT) {index = RSSI_AMOUNT;}  // to not overflow, caution! dont set RSSI_AMOUNT to high!
+}
+
+// Calculates the average RSSI value of the RSSI_AMOUNT latest packets
+void calculate_RSSI_average() {
+	accumulator = 0;
+	if (index >= RSSI_AMOUNT) {
+		int i;
+		for (i = 0; i < RSSI_AMOUNT; ++i)
+		{
+			accumulator += rssi_readings[i];
+		}
+		avg_rssi = accumulator / RSSI_AMOUNT;
+	} else {
+		avg_rssi = 0;  // if we dont have enough readings for the moving average set the average to 0
+	}
+	printf("avg_rssi: %d \n", avg_rssi); 
+	printf("accumulator: %d\n",  accumulator);;
+}
+
+uint8_t calculate_distance(int rssi_value) {
+	return 1;
+}
 static const struct unicast_callbacks unicast_callbacks = {recv_uc, sent_uc};
 static struct unicast_conn uc;
 
