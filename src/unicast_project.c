@@ -10,7 +10,12 @@
 #include <stdio.h>
 #include "dev/cc2420/cc2420.h"
 
-#define TX_POWER 31
+// The three allowed TX powers
+#define MAX_TX_POWER 31
+#define MID_TX_POWER 19
+#define MIN_TX_POWER 11
+
+#define TX_POWER MID_TX_POWER
 #define OFFSET 10		// the RSSI power indication when placing two motes on top of eachother (Cooja) 
 #define RSSI_AMOUNT 10	// the number of RSSI readings to store in a buffer for the moving average
 
@@ -24,14 +29,15 @@ int accumulator = 0;
 
 void store_RSSI_value(int rssi_value);
 void calculate_RSSI_average();
+uint16_t calculate_distance();
+
 
 static void recv_uc(struct unicast_conn *c, const linkaddr_t *from) {
 	printf("unicast message received from %d.%d\n",from->u8[0], from->u8[1]);
 	int received_rssi = packetbuf_attr(PACKETBUF_ATTR_RSSI);
 
 	store_RSSI_value(received_rssi);
-	calculate_RSSI_average();
-	
+
 }
 
 static void sent_uc(struct unicast_conn *c, int status, int num_tx) {
@@ -67,9 +73,33 @@ void calculate_RSSI_average() {
 	printf("accumulator: %d\n",  accumulator);;
 }
 
-uint8_t calculate_distance(int rssi_value) {
-	return 1;
+// Increase decimals for better resolution????
+// See report for calculations of q
+uint16_t calculate_distance() {
+	int q = 0;				// quota * 10, (RSSI / DISTANCE) 
+	uint16_t distance = 0;  // distance in cm
+	switch (TX_POWER) {
+		case MAX_TX_POWER :
+		q = -16;
+		break;
+
+		case MID_TX_POWER :
+		q = -27;
+		break;
+
+		case MIN_TX_POWER :
+		q = -48;
+		break;
+
+		default :
+		q = -16;
+	}
+
+	distance = ((avg_rssi * 100) / q) * 10;		// q is scaled 10x to be able to utilize ints
+	printf("distance: %dcm, q: %d\n", distance, q);
+	return distance;
 }
+
 static const struct unicast_callbacks unicast_callbacks = {recv_uc, sent_uc};
 static struct unicast_conn uc;
 
@@ -96,6 +126,8 @@ PROCESS_THREAD(unicast_process, ev, data)
 			unicast_send(&uc, &addr);
 			printf("My addr : %d.%d \n",linkaddr_node_addr.u8[0],linkaddr_node_addr.u8[1]);
 		}	
+		calculate_RSSI_average();	
+		calculate_distance();
 	}
 	
 	PROCESS_END();
