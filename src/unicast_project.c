@@ -22,6 +22,8 @@
 PROCESS(unicast_process, "unicast");
 AUTOSTART_PROCESSES(&unicast_process);
 
+enum Mote {Origo, Yaxis, Xaxis, Sink}; 	// according to the addresses given by cooja
+
 static int rssi_readings[RSSI_AMOUNT];		// store the last readings to calculate a moving average (is EWA better?)
 static int index = 0;			// keeps track of the next location to store data in from rssi_readings
 int avg_rssi = 0;
@@ -30,7 +32,7 @@ int accumulator = 0;
 void store_RSSI_value(int rssi_value);
 void calculate_RSSI_average();
 uint16_t calculate_distance();
-
+enum Mote mote = Origo;
 
 static void recv_uc(struct unicast_conn *c, const linkaddr_t *from) {
 	printf("unicast message received from %d.%d\n",from->u8[0], from->u8[1]);
@@ -100,6 +102,15 @@ uint16_t calculate_distance() {
 	return distance;
 }
 
+enum Mote set_enum() {
+	return Xaxis;
+}
+
+void init_mote() {
+	mote = set_enum();
+	printf("I am a %d\n", mote);
+}
+
 static const struct unicast_callbacks unicast_callbacks = {recv_uc, sent_uc};
 static struct unicast_conn uc;
 
@@ -109,6 +120,8 @@ PROCESS_THREAD(unicast_process, ev, data)
 	
 	PROCESS_BEGIN();
 	
+	init_mote();
+
 	unicast_open(&uc, 146, &unicast_callbacks);
 	cc2420_set_txpower(TX_POWER);
 	while(1) {
