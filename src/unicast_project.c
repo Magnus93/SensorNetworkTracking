@@ -102,13 +102,16 @@ uint16_t calculate_distance() {
 	return distance;
 }
 
+// returns the corresponding enum to the nodes address
+// we will only use 4 nodes so only 8 bits of address is needed
 enum Mote set_enum() {
-	return Xaxis;
+	return linkaddr_node_addr.u8[0];
 }
 
 void init_mote() {
+	char* enums[4] = {"Origo", "Yaxis", "Xaxis", "Sink"};
 	mote = set_enum();
-	printf("I am a %d\n", mote);
+	printf("I am a %s\n", enums[mote-1]);
 }
 
 static const struct unicast_callbacks unicast_callbacks = {recv_uc, sent_uc};
