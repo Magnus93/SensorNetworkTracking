@@ -1,4 +1,4 @@
-all: unicast_project 
+all: unicast_project
 	
 CONTIKI = ../../contiki
 CONTIKI_WITH_RIME = 1

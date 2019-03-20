@@ -8,19 +8,13 @@
 uint8_t x_size = 0;				// length of x axis
 uint8_t y_size = 0;				// length of y axis
 int rssi_readings[RSSI_AMOUNT];		// store the last readings to calculate a moving average (is EWA better?)
-static int index = 0;			// keeps track of the next location to store data in from rssi_readings
+static int rssi_index = 0;			// keeps track of the next location to store data in from rssi_readings
 int avg_rssi = 0;
 int accumulator = 0;
 
-typedef enum Mote
-{	
-	Origin, 
-	Yaxis, 
-	Xaxis, 
-	Sink
-} Mote_t; 	// according to the addresses given by cooja
 
-Mote_t mote = Origin;
+
+
 
 void store_RSSI_value(int rssi_value);
 void calculate_RSSI_average();
@@ -30,16 +24,16 @@ PROCESS(unicast_process, "unicast");
 AUTOSTART_PROCESSES(&unicast_process);
 
 void store_RSSI_value(int rssi_value) {
-	printf("index: %d\n", index);
-	rssi_readings[index % RSSI_AMOUNT] = rssi_value + OFFSET;		// store the latest reading at the oldest value
-	index++;
-	if (index >= 100 * RSSI_AMOUNT) {index = RSSI_AMOUNT;}  // to not overflow, caution! dont set RSSI_AMOUNT to high!
+	printf("rssi_index: %d\n", rssi_index);
+	rssi_readings[rssi_index % RSSI_AMOUNT] = rssi_value + OFFSET;		// store the latest reading at the oldest value
+	rssi_index++;
+	if (rssi_index >= 100 * RSSI_AMOUNT) {rssi_index = RSSI_AMOUNT;}  // to not overflow, caution! dont set RSSI_AMOUNT to high!
 }
 
 // Calculates the average RSSI value of the RSSI_AMOUNT latest packets
 void calculate_RSSI_average() {
 	accumulator = 0;
-	if (index >= RSSI_AMOUNT) {
+	if (rssi_index >= RSSI_AMOUNT) {
 		int i;
 		for (i = 0; i < RSSI_AMOUNT; ++i)
 		{

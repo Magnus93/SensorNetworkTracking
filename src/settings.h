@@ -16,7 +16,13 @@
 #define OFFSET 10		// the RSSI power indication when placing two motes on top of eachother (Cooja) 
 #define RSSI_AMOUNT 10	// the number of RSSI readings to store in a buffer for the moving average
 
-  
+typedef enum Mote
+{	
+	Origin, 
+	Yaxis, 
+	Xaxis, 
+	Sink
+} Mote_t; 	// according to the addresses given by cooja
 
-
+Mote_t mote = Origin;
 #endif
