@@ -3,43 +3,31 @@
 	PURPOSE : 75 sends, 63 receives the signal strength
 
 */
-
 #include "settings.h"
 
-
-PROCESS(unicast_process, "unicast");
-AUTOSTART_PROCESSES(&unicast_process);
-
-enum Mote {Origin, Yaxis, Xaxis, Sink}; 	// according to the addresses given by cooja
-
-static int rssi_readings[RSSI_AMOUNT];		// store the last readings to calculate a moving average (is EWA better?)
+uint8_t x_size = 0;				// length of x axis
+uint8_t y_size = 0;				// length of y axis
+int rssi_readings[RSSI_AMOUNT];		// store the last readings to calculate a moving average (is EWA better?)
 static int index = 0;			// keeps track of the next location to store data in from rssi_readings
 int avg_rssi = 0;
 int accumulator = 0;
-uint8_t x_size = 0;				// length of x axis
-uint8_t y_size = 0;				// length of y axis
+
+typedef enum Mote
+{	
+	Origin, 
+	Yaxis, 
+	Xaxis, 
+	Sink
+} Mote_t; 	// according to the addresses given by cooja
+
+Mote_t mote = Origin;
 
 void store_RSSI_value(int rssi_value);
 void calculate_RSSI_average();
 uint16_t calculate_distance();
-enum Mote mote = Origin;
 
-static void recv_uc(struct unicast_conn *c, const linkaddr_t *from) {
-	printf("unicast message received from %d.%d\n",from->u8[0], from->u8[1]);
-	int received_rssi = packetbuf_attr(PACKETBUF_ATTR_RSSI);
-
-	store_RSSI_value(received_rssi);
-
-}
-
-static void sent_uc(struct unicast_conn *c, int status, int num_tx) {
-	const linkaddr_t *dest = packetbuf_addr(PACKETBUF_ADDR_RECEIVER);
-	if(linkaddr_cmp(dest, &linkaddr_null)) {
-		return;
-	}
-	printf("unicast message sent to %d.%d: status %d num_tx %d power (0-31) %d\n", 
-		dest->u8[0], dest->u8[1], status, num_tx, TX_POWER);
-}
+PROCESS(unicast_process, "unicast");
+AUTOSTART_PROCESSES(&unicast_process);
 
 void store_RSSI_value(int rssi_value) {
 	printf("index: %d\n", index);
@@ -92,9 +80,25 @@ uint16_t calculate_distance() {
 	return distance;
 }
 
+static void recv_uc(struct unicast_conn *c, const linkaddr_t *from) {
+	printf("unicast message received from %d.%d\n",from->u8[0], from->u8[1]);
+	int received_rssi = packetbuf_attr(PACKETBUF_ATTR_RSSI);
+
+	store_RSSI_value(received_rssi);
+}
+
+static void sent_uc(struct unicast_conn *c, int status, int num_tx) {
+	const linkaddr_t *dest = packetbuf_addr(PACKETBUF_ADDR_RECEIVER);
+	if(linkaddr_cmp(dest, &linkaddr_null)) {
+		return;
+	}
+	printf("unicast message sent to %d.%d: status %d num_tx %d power (0-31) %d\n", 
+		dest->u8[0], dest->u8[1], status, num_tx, TX_POWER);
+}
+
 // returns the corresponding enum to the nodes address
 // we will only use 4 nodes so only 8 bits of address is needed
-enum Mote set_enum() {
+Mote_t set_enum() {
 	return linkaddr_node_addr.u8[0];
 }
 
