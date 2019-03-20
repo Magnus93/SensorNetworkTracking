@@ -4,20 +4,8 @@
 
 */
 
+#include "settings.h"
 
-#include "contiki.h"
-#include "net/rime/rime.h"
-#include <stdio.h>
-#include "dev/cc2420/cc2420.h"
-
-// The three allowed TX powers
-#define MAX_TX_POWER 31
-#define MID_TX_POWER 19
-#define MIN_TX_POWER 11
-
-#define TX_POWER MID_TX_POWER
-#define OFFSET 10		// the RSSI power indication when placing two motes on top of eachother (Cooja) 
-#define RSSI_AMOUNT 10	// the number of RSSI readings to store in a buffer for the moving average
 
 PROCESS(unicast_process, "unicast");
 AUTOSTART_PROCESSES(&unicast_process);
@@ -34,7 +22,7 @@ uint8_t y_size = 0;				// length of y axis
 void store_RSSI_value(int rssi_value);
 void calculate_RSSI_average();
 uint16_t calculate_distance();
-enum Mote mote = Origo;
+enum Mote mote = Origin;
 
 static void recv_uc(struct unicast_conn *c, const linkaddr_t *from) {
 	printf("unicast message received from %d.%d\n",from->u8[0], from->u8[1]);
@@ -113,7 +101,7 @@ enum Mote set_enum() {
 void init_mote() {
 	mote = set_enum();
 
-	char* enums[4] = {"Origo", "Yaxis", "Xaxis", "Sink"};
+	char* enums[4] = {"Origin", "Yaxis", "Xaxis", "Sink"};
 	printf("I am a %s\n", enums[mote-1]);
 }
 
