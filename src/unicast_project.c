@@ -22,12 +22,14 @@
 PROCESS(unicast_process, "unicast");
 AUTOSTART_PROCESSES(&unicast_process);
 
-enum Mote {Origo, Yaxis, Xaxis, Sink}; 	// according to the addresses given by cooja
+enum Mote {Origin, Yaxis, Xaxis, Sink}; 	// according to the addresses given by cooja
 
 static int rssi_readings[RSSI_AMOUNT];		// store the last readings to calculate a moving average (is EWA better?)
 static int index = 0;			// keeps track of the next location to store data in from rssi_readings
 int avg_rssi = 0;
 int accumulator = 0;
+uint8_t x_size = 0;				// length of x axis
+uint8_t y_size = 0;				// length of y axis
 
 void store_RSSI_value(int rssi_value);
 void calculate_RSSI_average();
@@ -109,8 +111,9 @@ enum Mote set_enum() {
 }
 
 void init_mote() {
-	char* enums[4] = {"Origo", "Yaxis", "Xaxis", "Sink"};
 	mote = set_enum();
+
+	char* enums[4] = {"Origo", "Yaxis", "Xaxis", "Sink"};
 	printf("I am a %s\n", enums[mote-1]);
 }
 
