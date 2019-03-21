@@ -20,12 +20,24 @@ PROCESS_THREAD(unicast_process, ev, data)
 
 
 	switch (mote) {
+		case Origin:
+			printf("I am the Origin\n");
+			process_start(&moron_process, NULL);
+			break;
+		case Yaxis:
+			process_start(&moron_process, NULL);
+			printf("I am the Yaxis\n");
+			break;
+		case Xaxis:
+			process_start(&moron_process, NULL);
+			printf("I am the Xaxis\n");
+			break;
 		case Sink: 
-			printf("I am the sink!\n");
+			printf("I am the Sink!\n");
 			process_start(&sink_process, NULL);
 			break;
 		default :
-			printf("I am not a sink!\n");
+			printf("I am nothing, so now I die!\n");
 	}
 
 	PROCESS_END();

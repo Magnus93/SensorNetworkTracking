@@ -18,6 +18,7 @@
 
 typedef enum Mote
 {	
+	Nothing,
 	Origin, 
 	Yaxis, 
 	Xaxis, 
