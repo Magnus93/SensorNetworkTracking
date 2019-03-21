@@ -18,7 +18,15 @@ PROCESS_THREAD(unicast_process, ev, data)
 	
 	init_mote();
 
-	process_start(&sink_process, NULL);
+
+	switch (mote) {
+		case Sink: 
+			printf("I am the sink!\n");
+			process_start(&sink_process, NULL);
+			break;
+		default :
+			printf("I am not a sink!\n");
+	}
 
 	PROCESS_END();
 }
