@@ -3,7 +3,7 @@
 uint8_t x_size = 0;				// length of x axis
 uint8_t y_size = 0;				// length of y axis
 int rssi_readings[RSSI_AMOUNT];		// store the last readings to calculate a moving average (is EWA better?)
-static int rssi_index = 0;			// keeps track of the next location to store data in from rssi_readings
+int rssi_index = 0;			// keeps track of the next location to store data in from rssi_readings
 int avg_rssi = 0;
 int accumulator = 0;
 
