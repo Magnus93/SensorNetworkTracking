@@ -1,12 +1,12 @@
-#ifndef SETTINGS
-#define SETTINGS
+#ifndef SETTINGS_H_
+#define SETTINGS_H_
 
 
 #include "contiki.h"
 #include "net/rime/rime.h"
 #include <stdio.h>
 #include "dev/cc2420/cc2420.h"
-#include "distance.h"
+
 // The three allowed TX powers
 #define MAX_TX_POWER 31
 #define MID_TX_POWER 19
@@ -24,5 +24,6 @@ typedef enum Mote
 	Sink
 } Mote_t; 	// according to the addresses given by cooja
 
-Mote_t mote = Origin;
+void init_mote();
+
 #endif
