@@ -6,6 +6,17 @@
 #include "settings.h"
 #include "distance.h"
 
+typedef enum Sink_States
+{	
+	ZreqAxis,
+	Waiting, 
+	ZreqOrigoDist, 
+	ZreqXDist, 
+	ZreqYDist,
+	ZcalcPos,
+	ZdisplayPos
+} Sink_States; 
+
 PROCESS(sink_process, "sink");
 
 

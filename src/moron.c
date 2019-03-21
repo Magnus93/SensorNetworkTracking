@@ -47,8 +47,6 @@ PROCESS_THREAD(moron_process, ev, data)
 			unicast_send(&uc, &addr);
 		}	
 		printf("My addr : %d.%d \n",linkaddr_node_addr.u8[0],linkaddr_node_addr.u8[1]);
-		calculate_RSSI_average();	
-		calculate_distance();
 	}
 	
 	PROCESS_END();
