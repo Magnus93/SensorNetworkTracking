@@ -15,7 +15,9 @@ typedef enum Sink_States
 	ZreqYDist,
 	ZcalcPos,
 	ZdisplayPos
-} Sink_States; 
+} Sink_States_t; 
+
+Sink_States_t state = ZreqAxis;
 
 PROCESS(sink_process, "sink");
 
@@ -55,6 +57,39 @@ PROCESS_THREAD(sink_process, ev, data)
 		etimer_set(&et, CLOCK_SECOND);
 		
 		PROCESS_WAIT_EVENT_UNTIL(etimer_expired(&et));
+
+		switch(state) {
+			case ZreqAxis:
+				printf("Requesting Axis State\n");
+				state = Waiting;
+				break;
+			case Waiting:
+				printf("Waiting State\n");
+				state = ZreqOrigoDist;
+				break;
+			case ZreqOrigoDist:
+				printf("Requesting Origo Distance State\n");
+				state = ZreqXDist;
+				break;
+			case ZreqXDist:
+				printf("Requesting X Distance State\n");
+				state = ZreqYDist;
+				break;
+			case ZreqYDist:
+				printf("Requesting Y Distance State\n");
+				state = ZcalcPos;
+				break;
+			case ZcalcPos:
+				printf("Calculating Distance State\n");
+				state = ZdisplayPos;
+				break;
+			case ZdisplayPos:
+				printf("Displaying Position State\n");
+				state = ZreqOrigoDist;
+				break;
+			default:
+				printf("We fucked up by entering a none existing state!\n");
+		}
 		
 		packetbuf_copyfrom("Hello", 5);
 		addr.u8[0] = Sink;
