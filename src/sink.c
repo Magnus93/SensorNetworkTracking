@@ -81,6 +81,7 @@ PROCESS_THREAD(sink_process, ev, data)
 				break;
 			case ZcalcPos:
 				printf("Calculating Distance State\n");
+				calculate_distance();
 				state = ZdisplayPos;
 				break;
 			case ZdisplayPos:
@@ -88,7 +89,7 @@ PROCESS_THREAD(sink_process, ev, data)
 				state = ZreqOrigoDist;
 				break;
 			default:
-				printf("We fucked up by entering a none existing state!\n");
+				printf("We fucked up by entering a none existing state!  ¯\\_(ツ)_/¯ \n");
 		}
 		
 		packetbuf_copyfrom("Hello", 5);
@@ -99,7 +100,7 @@ PROCESS_THREAD(sink_process, ev, data)
 		}	
 		printf("My addr : %d.%d \n",linkaddr_node_addr.u8[0],linkaddr_node_addr.u8[1]);
 		calculate_RSSI_average();	
-		calculate_distance();
+		
 	}
 	
 	PROCESS_END();
