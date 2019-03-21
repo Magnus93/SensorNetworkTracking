@@ -24,6 +24,8 @@ typedef enum Mote
 	Sink
 } Mote_t; 	// according to the addresses given by cooja
 
+Mote_t mote;
+
 void init_mote();
 
 #endif
