@@ -42,19 +42,19 @@ static void recv_uc(struct unicast_conn *c, const linkaddr_t *from) {
 			}
 			if (received_msg[COMMAND] == REPLY_DISTANCE) {
 				printf("Received the distance to Origin: %ld\n", received_msg[DISTANCE]);
-				// store the RSSI value in a proper location 
+				// store the distance value in a proper location 
 			}
 			break;
 		case Yaxis:
 			if (received_msg[COMMAND] == REPLY_DISTANCE) {
 				printf("Received the distance to Yaxis: %ld\n", received_msg[DISTANCE]);
-				// store the RSSI value in a proper location 
+				// store the distance value in a proper location 
 			}
 			break;
 		case Xaxis:
 			if (received_msg[COMMAND] == REPLY_DISTANCE) {
 				printf("Received the distance to Xaxis: %ld\n", received_msg[DISTANCE]);
-				// store the RSSI value in a proper location 
+				// store the distance value in a proper location 
 			}
 			break;
 		default:
