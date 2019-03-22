@@ -23,6 +23,11 @@ void store_RSSI_value(int rssi_value, Mote_t mote) {/*
 	*/
 }
 
+void set_axis(uint16_t x, uint16_t y) {
+	x_size = x;
+	y_size = y;
+}
+
 // Calculates the average RSSI value of the RSSI_AMOUNT latest packets
 void calculate_RSSI_average(Mote_t mote) {/*
 	accumulator = 0;

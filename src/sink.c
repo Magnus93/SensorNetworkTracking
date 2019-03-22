@@ -19,6 +19,7 @@ typedef enum Sink_States
 } Sink_States_t; 
 
 Sink_States_t state = ZreqAxis;
+uint8_t received_axis = 0;
 
 PROCESS(sink_process, "sink");
 
@@ -100,26 +101,47 @@ PROCESS_THREAD(sink_process, ev, data)
 				message = REQUEST_AXIS;
 				packetbuf_copyfrom(&message, 1);
 				addr.u8[0] = Origin;
+				addr.u8[1] = 0;
 				unicast_send(&uc, &addr);
 				state = Waiting;
 				break;
 			case Waiting:
 				printf("Waiting State\n");
-				state = SetAxis;
+				// read x and y values from Origin
+				received_axis = 1;  // remove this when implemented!!!
+				if (received_axis) {
+					state = SetAxis;
+				}
 				break;
 			case SetAxis:
 				printf("Setting Length of Axis State\n");
+				// use set_axis() when x and y is received
 				state = ZreqOrigoDist;
 			case ZreqOrigoDist:
 				printf("Requesting Origo Distance State\n");
+				message = REQUEST_ORIGIN_DISTANCE;
+				packetbuf_copyfrom(&message, 1);
+				addr.u8[0] = Origin;
+				addr.u8[1] = 0;
+				unicast_send(&uc, &addr);
 				state = ZreqXDist;
 				break;
 			case ZreqXDist:
 				printf("Requesting X Distance State\n");
+				message = REQUEST_X_DISTANCE;
+				packetbuf_copyfrom(&message, 1);
+				addr.u8[0] = Xaxis;
+				addr.u8[1] = 0;
+				unicast_send(&uc, &addr);
 				state = ZreqYDist;
 				break;
 			case ZreqYDist:
 				printf("Requesting Y Distance State\n");
+				message = REQUEST_Y_DISTANCE;
+				packetbuf_copyfrom(&message, 1);
+				addr.u8[0] = Xaxis;
+				addr.u8[1] = 0;
+				unicast_send(&uc, &addr);
 				state = ZcalcPos;
 				break;
 			case ZcalcPos:
