@@ -23,6 +23,9 @@
 #define REPLY_AXIS 2
 #define REPLY_DISTANCE 3
 
+// Locations in the data packet
+#define COMMAND  0
+#define DISTANCE 1
 
 typedef enum Mote
 {	
@@ -34,8 +37,6 @@ typedef enum Mote
 } Mote_t; 	// according to the addresses given by cooja
 
 Mote_t mote;
-
-uint8_t message;
 
 void init_mote();
 Mote_t get_type();

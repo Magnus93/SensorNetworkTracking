@@ -1,13 +1,22 @@
 #include "settings.h"
 #include "distance.h"
 
+
+
 PROCESS(moron_process, "moron");
 
 Mote_t mote;
+uint32_t packet_data[2];	// [command, distance in cm] ie [REPLY_DISTANCE, 1992]
 
 static void recv_uc(struct unicast_conn *c, const linkaddr_t *from) {
-	printf("unicast message received from %d.%d\n",from->u8[0], from->u8[1]);
+	
+	uint32_t *received_data = packetbuf_dataptr();
 	int received_rssi = packetbuf_attr(PACKETBUF_ATTR_RSSI);
+
+	packet_data[COMMAND] = (received_data[COMMAND]);
+	packet_data[DISTANCE] = (received_data[DISTANCE]);
+	printf("unicast message received from %d.%d\n",from->u8[0], from->u8[1]);
+	printf("with data[COMMAND]: %ld and data[DISTANCE]: %ld\n", packet_data[COMMAND], packet_data[DISTANCE]);
 
 	store_RSSI_value(received_rssi, get_type());
 }
@@ -42,7 +51,7 @@ PROCESS_THREAD(moron_process, ev, data)
 		etimer_set(&et, CLOCK_SECOND);
 		
 		PROCESS_WAIT_EVENT_UNTIL(etimer_expired(&et));
-		int sent_message = get_type();
+		uint32_t sent_message = get_type();
 		packetbuf_copyfrom(&sent_message, 1);
 		addr.u8[0] = Sink;
 		addr.u8[1] = 0;
@@ -52,6 +61,7 @@ PROCESS_THREAD(moron_process, ev, data)
 
 
 		printf("My addr : %d.%d \n",linkaddr_node_addr.u8[0],linkaddr_node_addr.u8[1]);
+		
 	}
 	
 	PROCESS_END();
