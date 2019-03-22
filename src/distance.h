@@ -3,9 +3,9 @@
 
 #include "settings.h"
 
-void store_RSSI_value(int rssi_value);
-void calculate_RSSI_average();
-uint16_t calculate_distance();
+void store_RSSI_value(int rssi_value, Mote_t mote);
+void calculate_RSSI_average(Mote_t mote);
+uint16_t calculate_distance(Mote_t mote);
 
 
 #endif

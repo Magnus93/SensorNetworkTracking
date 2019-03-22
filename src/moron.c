@@ -8,7 +8,7 @@ static void recv_uc(struct unicast_conn *c, const linkaddr_t *from) {
 	printf("unicast message received from %d.%d\n",from->u8[0], from->u8[1]);
 	int received_rssi = packetbuf_attr(PACKETBUF_ATTR_RSSI);
 
-	store_RSSI_value(received_rssi);
+	store_RSSI_value(received_rssi, get_type());
 }
 
 static void sent_uc(struct unicast_conn *c, int status, int num_tx) {
@@ -39,8 +39,8 @@ PROCESS_THREAD(moron_process, ev, data)
 		etimer_set(&et, CLOCK_SECOND);
 		
 		PROCESS_WAIT_EVENT_UNTIL(etimer_expired(&et));
-		
-		packetbuf_copyfrom("Hello", 5);
+		int sent_message = get_type();
+		packetbuf_copyfrom(&sent_message, 1);
 		addr.u8[0] = Sink;
 		addr.u8[1] = 0;
 		if(!linkaddr_cmp(&addr, &linkaddr_node_addr)) {

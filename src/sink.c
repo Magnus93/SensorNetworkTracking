@@ -24,12 +24,45 @@ PROCESS(sink_process, "sink");
 
 
 static void recv_uc(struct unicast_conn *c, const linkaddr_t *from) {
-	char *received_msg;
 	printf("unicast message received from %d.%d\n",from->u8[0], from->u8[1]);
+	uint8_t sender = from->u8[0];
+
+	int received_msg;
 	int received_rssi = packetbuf_attr(PACKETBUF_ATTR_RSSI);
-	received_msg = (char*)packetbuf_dataptr();
-	printf("Message Received: %s\n", received_msg);
-	store_RSSI_value(received_rssi);
+	
+	received_msg = *(int*)packetbuf_dataptr();
+	
+	switch(sender) {
+		case Origin:
+			printf("Received message: %d from Origin\n", received_msg);
+			if (received_msg == REPLY_AXIS) {
+				printf("Received length of x and y axis from Origin\n");
+				// we need to do some magic stuff here to get both values from Origin
+			}
+			if (received_msg == REPLY_ORIGIN_DISTANCE) {
+				printf("Received the distance to Origin\n");
+				// store the RSSI value in a proper location 
+			}
+			break;
+		case Yaxis:
+			printf("Received message: %d from Yaxis\n", received_msg);
+			if (received_msg == REPLY_Y_DISTANCE) {
+				printf("Received the distance to Origin\n");
+				// store the RSSI value in a proper location 
+			}
+			break;
+		case Xaxis:
+			printf("Received message: %d from Xaxis\n", received_msg);
+			if (received_msg == REPLY_X_DISTANCE) {
+				printf("Received the distance to Origin\n");
+				// store the RSSI value in a proper location 
+			}
+			break;
+		default:
+			printf("We got something from someone that should not exist!!\n");
+	}
+
+	store_RSSI_value(received_rssi, get_type());
 }
 
 static void sent_uc(struct unicast_conn *c, int status, int num_tx) {
@@ -91,7 +124,7 @@ PROCESS_THREAD(sink_process, ev, data)
 				break;
 			case ZcalcPos:
 				printf("Calculating Distance State\n");
-				calculate_distance();
+				calculate_distance(get_type());
 				state = ZdisplayPos;
 				break;
 			case ZdisplayPos:
@@ -109,7 +142,7 @@ PROCESS_THREAD(sink_process, ev, data)
 			unicast_send(&uc, &addr);
 		}	
 		printf("My addr : %d.%d \n",linkaddr_node_addr.u8[0],linkaddr_node_addr.u8[1]);
-		calculate_RSSI_average();	
+		calculate_RSSI_average(get_type());	
 		
 	}
 	

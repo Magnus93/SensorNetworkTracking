@@ -16,11 +16,16 @@
 #define OFFSET 10		// the RSSI power indication when placing two motes on top of eachother (Cooja) 
 #define RSSI_AMOUNT 10	// the number of RSSI readings to store in a buffer for the moving average
 
+
+// Messages transmitted between nodes
 #define REQUEST_AXIS 0
-#define REQUEST_ORIGO_DISTANCE 1
+#define REQUEST_ORIGIN_DISTANCE 1
 #define REQUEST_X_DISTANCE 2
 #define REQUEST_Y_DISTANCE 3
-
+#define REPLY_AXIS 5
+#define REPLY_ORIGIN_DISTANCE 6
+#define REPLY_X_DISTANCE 7
+#define REPLY_Y_DISTANCE 8
 
 
 typedef enum Mote
@@ -37,5 +42,6 @@ Mote_t mote;
 uint8_t message;
 
 void init_mote();
+Mote_t get_type();
 
 #endif
