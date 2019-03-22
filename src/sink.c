@@ -10,6 +10,7 @@ typedef enum Sink_States
 {	
 	ZreqAxis,
 	Waiting, 
+	SetAxis,
 	ZreqOrigoDist, 
 	ZreqXDist, 
 	ZreqYDist,
@@ -23,9 +24,11 @@ PROCESS(sink_process, "sink");
 
 
 static void recv_uc(struct unicast_conn *c, const linkaddr_t *from) {
+	char *received_msg;
 	printf("unicast message received from %d.%d\n",from->u8[0], from->u8[1]);
 	int received_rssi = packetbuf_attr(PACKETBUF_ATTR_RSSI);
-
+	received_msg = (char*)packetbuf_dataptr();
+	printf("Message Received: %s\n", received_msg);
 	store_RSSI_value(received_rssi);
 }
 
@@ -61,12 +64,19 @@ PROCESS_THREAD(sink_process, ev, data)
 		switch(state) {
 			case ZreqAxis:
 				printf("Requesting Axis State\n");
+				message = REQUEST_AXIS;
+				packetbuf_copyfrom(&message, 1);
+				addr.u8[0] = Origin;
+				unicast_send(&uc, &addr);
 				state = Waiting;
 				break;
 			case Waiting:
 				printf("Waiting State\n");
-				state = ZreqOrigoDist;
+				state = SetAxis;
 				break;
+			case SetAxis:
+				printf("Setting Length of Axis State\n");
+				state = ZreqOrigoDist;
 			case ZreqOrigoDist:
 				printf("Requesting Origo Distance State\n");
 				state = ZreqXDist;
