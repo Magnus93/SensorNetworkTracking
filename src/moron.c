@@ -18,7 +18,7 @@ static void recv_uc(struct unicast_conn *c, const linkaddr_t *from) {
 	printf("unicast message received from %d.%d\n",from->u8[0], from->u8[1]);
 	printf("with data[COMMAND]: %ld and data[DISTANCE]: %ld\n", packet_data[COMMAND], packet_data[DISTANCE]);
 
-	store_RSSI_value(received_rssi, get_type());
+	store_RSSI_value(received_rssi);
 }
 
 static void sent_uc(struct unicast_conn *c, int status, int num_tx) {
@@ -48,16 +48,30 @@ PROCESS_THREAD(moron_process, ev, data)
 		static struct etimer et;
 		linkaddr_t addr;
 		
-		etimer_set(&et, CLOCK_SECOND);
+		etimer_set(&et, CLOCK_SECOND/2);
 		
 		PROCESS_WAIT_EVENT_UNTIL(etimer_expired(&et));
-		uint32_t sent_message = get_type();
-		packetbuf_copyfrom(&sent_message, 1);
 		addr.u8[0] = Sink;
 		addr.u8[1] = 0;
-		if(!linkaddr_cmp(&addr, &linkaddr_node_addr)) {
+		
+		if (packet_data[COMMAND] == REQUEST_DISTANCE) {
+			printf("Someone requested the distance\n");
+			// only transmitting to the sink for now! gather axis later
+			packet_data[COMMAND] = REPLY_DISTANCE;
+			packet_data[DISTANCE] = calculate_distance();
+			packetbuf_copyfrom(&packet_data, sizeof(uint32_t) * 2);
 			unicast_send(&uc, &addr);
-		}	
+			packet_data[COMMAND] = WAIT_FOR_COMMAND;
+		}
+		else if (packet_data[COMMAND] == REQUEST_AXIS) {
+			// make Origo request the axis
+		}
+		//uint32_t sent_message = get_type();
+		//packetbuf_copyfrom(&sent_message, 1);
+
+		//if(!linkaddr_cmp(&addr, &linkaddr_node_addr)) {
+		//	unicast_send(&uc, &addr);
+		//}	
 
 
 		printf("My addr : %d.%d \n",linkaddr_node_addr.u8[0],linkaddr_node_addr.u8[1]);
