@@ -3,6 +3,7 @@
 
 PROCESS(moron_process, "moron");
 
+Mote_t mote;
 
 static void recv_uc(struct unicast_conn *c, const linkaddr_t *from) {
 	printf("unicast message received from %d.%d\n",from->u8[0], from->u8[1]);
@@ -29,6 +30,8 @@ PROCESS_THREAD(moron_process, ev, data)
 	
 	PROCESS_BEGIN();
 
+	mote = get_type();
+
 	unicast_open(&uc, 146, &unicast_callbacks);
 	cc2420_set_txpower(TX_POWER);
 	
@@ -46,6 +49,8 @@ PROCESS_THREAD(moron_process, ev, data)
 		if(!linkaddr_cmp(&addr, &linkaddr_node_addr)) {
 			unicast_send(&uc, &addr);
 		}	
+
+
 		printf("My addr : %d.%d \n",linkaddr_node_addr.u8[0],linkaddr_node_addr.u8[1]);
 	}
 	

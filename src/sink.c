@@ -40,21 +40,21 @@ static void recv_uc(struct unicast_conn *c, const linkaddr_t *from) {
 				printf("Received length of x and y axis from Origin\n");
 				// we need to do some magic stuff here to get both values from Origin
 			}
-			if (received_msg == REPLY_ORIGIN_DISTANCE) {
+			if (received_msg == REPLY_DISTANCE) {
 				printf("Received the distance to Origin\n");
 				// store the RSSI value in a proper location 
 			}
 			break;
 		case Yaxis:
 			printf("Received message: %d from Yaxis\n", received_msg);
-			if (received_msg == REPLY_Y_DISTANCE) {
+			if (received_msg == REPLY_DISTANCE) {
 				printf("Received the distance to Origin\n");
 				// store the RSSI value in a proper location 
 			}
 			break;
 		case Xaxis:
 			printf("Received message: %d from Xaxis\n", received_msg);
-			if (received_msg == REPLY_X_DISTANCE) {
+			if (received_msg == REPLY_DISTANCE) {
 				printf("Received the distance to Origin\n");
 				// store the RSSI value in a proper location 
 			}
@@ -119,7 +119,7 @@ PROCESS_THREAD(sink_process, ev, data)
 				state = ZreqOrigoDist;
 			case ZreqOrigoDist:
 				printf("Requesting Origo Distance State\n");
-				message = REQUEST_ORIGIN_DISTANCE;
+				message = REQUEST_DISTANCE;
 				packetbuf_copyfrom(&message, 1);
 				addr.u8[0] = Origin;
 				addr.u8[1] = 0;
@@ -128,7 +128,7 @@ PROCESS_THREAD(sink_process, ev, data)
 				break;
 			case ZreqXDist:
 				printf("Requesting X Distance State\n");
-				message = REQUEST_X_DISTANCE;
+				message = REQUEST_DISTANCE;
 				packetbuf_copyfrom(&message, 1);
 				addr.u8[0] = Xaxis;
 				addr.u8[1] = 0;
@@ -137,7 +137,7 @@ PROCESS_THREAD(sink_process, ev, data)
 				break;
 			case ZreqYDist:
 				printf("Requesting Y Distance State\n");
-				message = REQUEST_Y_DISTANCE;
+				message = REQUEST_DISTANCE;
 				packetbuf_copyfrom(&message, 1);
 				addr.u8[0] = Xaxis;
 				addr.u8[1] = 0;

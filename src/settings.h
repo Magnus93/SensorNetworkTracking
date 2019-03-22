@@ -19,13 +19,9 @@
 
 // Messages transmitted between nodes
 #define REQUEST_AXIS 0
-#define REQUEST_ORIGIN_DISTANCE 1
-#define REQUEST_X_DISTANCE 2
-#define REQUEST_Y_DISTANCE 3
-#define REPLY_AXIS 5
-#define REPLY_ORIGIN_DISTANCE 6
-#define REPLY_X_DISTANCE 7
-#define REPLY_Y_DISTANCE 8
+#define REQUEST_DISTANCE 1
+#define REPLY_AXIS 2
+#define REPLY_DISTANCE 3
 
 
 typedef enum Mote
