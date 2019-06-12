@@ -65,7 +65,7 @@ PROCESS_THREAD(moron_process, ev, data)
 			unicast_send(&uc, &addr);
 			packet_data[COMMAND] = WAIT_FOR_COMMAND;
 		}
-		else if (packet_data[COMMAND] == REQUEST_AXIS && get_type() == Origo) {
+		else if (packet_data[COMMAND] == REQUEST_AXIS && get_type() == Origin) {
 			
 			// DRY DRY DRY!
 			// make Origo request the axis

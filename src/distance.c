@@ -67,14 +67,32 @@ uint32_t calculate_distance() {
 	return distance;
 }
 
-Position_t calculate_position(uint32_t x_dist, uint32_t y_dist, uint32_t o_dist) {
-    uint32_t area, p, y_pos, x_pos;
+Position_t calculate_position(Distances_t dists) {
+    uint64_t area, p;
     Position_t pos;
-    p = (x_dist + x_size + o_dist) / 2;
-    area = sqrt(p*(p-a)*(p-b)*(p-c));
+    
+    p = (dists.xaxis + x_size + dists.origin) / 2;
+    area = sqrt(p*(p-dists.xaxis)*(p-x_size)*(p-dists.origin));
     pos.yPos = 2 * area / x_size ; 
-    pos.xPos = sqrt(o_dist^2 - y_pos^2);
+    pos.xPos = sqrt(dists.origin*dists.origin - pos.yPos*pos.yPos);
+    
+    printf("Area: %ld\n", area);
+    printf("Permimiter: %ld\n", p);
+    print_dists(dists);
+    print_pos(pos);
     return pos;
+}
+
+void print_pos(Position_t pos) {
+	printf("Position: x: %ld, y: %ld\n", pos.xPos, pos.yPos);
+}
+
+void print_dists(Distances_t dists) {
+	printf("Origin distance: %ld\n", dists.origin);
+	printf("Xaxis distance: %ld\n", dists.xaxis);
+	printf("Yaxis distance: %ld\n", dists.yaxis);
+	printf("Xaxis length: %ld\n", x_size);
+	printf("Yaxis length: %ld\n", y_size);
 }
     
     

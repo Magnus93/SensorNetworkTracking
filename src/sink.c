@@ -21,14 +21,15 @@ typedef enum Sink_States
 Sink_States_t state = ZreqAxis;
 uint8_t received_axis = 0;
 uint32_t packet_data[2];
-
+static Distances_t distances;
+static Position_t pos;
 PROCESS(sink_process, "sink");
 
 
 static void recv_uc(struct unicast_conn *c, const linkaddr_t *from) {
 	printf("unicast message received from %d.%d\n",from->u8[0], from->u8[1]);
 	uint8_t sender = from->u8[0];
-
+	
 	uint32_t *received_msg;
 	int received_rssi = packetbuf_attr(PACKETBUF_ATTR_RSSI);
 	
@@ -42,18 +43,21 @@ static void recv_uc(struct unicast_conn *c, const linkaddr_t *from) {
 			}
 			if (received_msg[COMMAND] == REPLY_DISTANCE) {
 				printf("Received the distance to Origin: %ld\n", received_msg[DISTANCE]);
+				distances.origin = received_msg[DISTANCE];
 				// store the distance value in a proper location 
 			}
 			break;
 		case Yaxis:
 			if (received_msg[COMMAND] == REPLY_DISTANCE) {
 				printf("Received the distance to Yaxis: %ld\n", received_msg[DISTANCE]);
+				distances.yaxis = received_msg[DISTANCE];
 				// store the distance value in a proper location 
 			}
 			break;
 		case Xaxis:
 			if (received_msg[COMMAND] == REPLY_DISTANCE) {
 				printf("Received the distance to Xaxis: %ld\n", received_msg[DISTANCE]);
+				distances.xaxis = received_msg[DISTANCE];
 				// store the distance value in a proper location 
 			}
 			break;
@@ -74,6 +78,7 @@ static void sent_uc(struct unicast_conn *c, int status, int num_tx) {
 
 static const struct unicast_callbacks unicast_callbacks = {recv_uc, sent_uc};
 static struct unicast_conn uc;
+
 
 PROCESS_THREAD(sink_process, ev, data)
 {
@@ -114,7 +119,7 @@ PROCESS_THREAD(sink_process, ev, data)
 			case SetAxis:
 				printf("Setting Length of Axis State\n");
 				// use true distance when x and y is received
-				set_axis(10 , 10);
+				set_axis(1000 , 1000);
 				state = ZreqOrigoDist;
 			case ZreqOrigoDist:
 				printf("Requesting Origo Distance State\n");
@@ -149,6 +154,7 @@ PROCESS_THREAD(sink_process, ev, data)
 			case ZcalcPos:
 				printf("Calculating Distance State\n");
 				calculate_distance(get_type());
+				pos = calculate_position(distances);
 				state = ZdisplayPos;
 				break;
 			case ZdisplayPos:

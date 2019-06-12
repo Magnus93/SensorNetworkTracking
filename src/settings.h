@@ -14,7 +14,7 @@
 
 #define TX_POWER 	MID_TX_POWER
 #define OFFSET 		10		// the RSSI power indication when placing two motes on top of eachother (Cooja) 
-#define RSSI_AMOUNT 10		// the number of RSSI readings to store in a buffer for the moving average
+#define RSSI_AMOUNT 1		// the number of RSSI readings to store in a buffer for the moving average
 
 
 // Messages transmitted between nodes
@@ -41,6 +41,12 @@ typedef struct Position {
 	uint32_t xPos;
 	uint32_t yPos;
 } Position_t;
+
+typedef struct Distances {
+	uint32_t origin;
+	uint32_t xaxis;
+	uint32_t yaxis;
+} Distances_t;
 
 Mote_t mote;
 
