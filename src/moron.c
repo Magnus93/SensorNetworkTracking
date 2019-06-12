@@ -65,22 +65,27 @@ PROCESS_THREAD(moron_process, ev, data)
 			unicast_send(&uc, &addr);
 			packet_data[COMMAND] = WAIT_FOR_COMMAND;
 		}
-		else if (packet_data[COMMAND] == REQUEST_AXIS) {
+		else if (packet_data[COMMAND] == REQUEST_AXIS && get_type() == Origo) {
+			
+			// DRY DRY DRY!
 			// make Origo request the axis
+
+			// Handle Yaxis distance here
+			packet_data[COMMAND] = REQUEST_DISTANCE;
+			packet_data[DISTANCE] = 0;
+			packetbuf_copyfrom(packet_data, 2);
 			addr.u8[0] = Yaxis;
 			addr.u8[1] = 0;
-			// Handle Yaxis distance here
+			unicast_send(&uc, &addr);
 
-			addr.u8[0] = Xaxis;
-			addr.u8[1] = 0;
 			// Handle Xaxis distance here
-
-
+			packet_data[COMMAND] = REQUEST_DISTANCE;
+			packet_data[DISTANCE] = 0;
+			packetbuf_copyfrom(packet_data, 2);
 			addr.u8[0] = Xaxis;
 			addr.u8[1] = 0;
-
-
-
+			unicast_send(&uc, &addr);
+			
 		}
 		//uint32_t sent_message = get_type();
 		//packetbuf_copyfrom(&sent_message, 1);

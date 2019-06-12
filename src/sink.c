@@ -113,7 +113,8 @@ PROCESS_THREAD(sink_process, ev, data)
 				break;
 			case SetAxis:
 				printf("Setting Length of Axis State\n");
-				// use set_axis() when x and y is received
+				// use true distance when x and y is received
+				set_axis(10 , 10);
 				state = ZreqOrigoDist;
 			case ZreqOrigoDist:
 				printf("Requesting Origo Distance State\n");
