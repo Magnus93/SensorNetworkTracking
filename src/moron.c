@@ -33,6 +33,8 @@ static void sent_uc(struct unicast_conn *c, int status, int num_tx) {
 static const struct unicast_callbacks unicast_callbacks = {recv_uc, sent_uc};
 static struct unicast_conn uc;
 
+
+
 PROCESS_THREAD(moron_process, ev, data)
 {
 	PROCESS_EXITHANDLER(unicast_close(&uc);)
@@ -65,6 +67,20 @@ PROCESS_THREAD(moron_process, ev, data)
 		}
 		else if (packet_data[COMMAND] == REQUEST_AXIS) {
 			// make Origo request the axis
+			addr.u8[0] = Yaxis;
+			addr.u8[1] = 0;
+			// Handle Yaxis distance here
+
+			addr.u8[0] = Xaxis;
+			addr.u8[1] = 0;
+			// Handle Xaxis distance here
+
+
+			addr.u8[0] = Xaxis;
+			addr.u8[1] = 0;
+
+
+
 		}
 		//uint32_t sent_message = get_type();
 		//packetbuf_copyfrom(&sent_message, 1);
