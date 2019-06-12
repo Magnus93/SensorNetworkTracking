@@ -37,6 +37,11 @@ typedef enum Mote
 	Sink
 } Mote_t; 	// according to the addresses given by cooja
 
+typedef struct Position {
+	uint32_t xPos;
+	uint32_t yPos;
+} Position_t;
+
 Mote_t mote;
 
 void init_mote();
