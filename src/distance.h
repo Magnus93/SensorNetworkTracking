@@ -3,6 +3,9 @@
 
 #include "settings.h"
 #include <math.h>
+
+int avg_rssi;
+
 void store_RSSI_value(int rssi_value);
 void calculate_RSSI_average();
 uint32_t calculate_distance();

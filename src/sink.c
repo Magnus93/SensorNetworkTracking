@@ -21,6 +21,7 @@ typedef enum Sink_States
 Sink_States_t state = ZreqAxis;
 uint8_t received_axis = 0;
 uint32_t packet_data[2];
+
 static Distances_t distances;
 static Position_t pos;
 PROCESS(sink_process, "sink");
@@ -38,7 +39,8 @@ static void recv_uc(struct unicast_conn *c, const linkaddr_t *from) {
 	switch(sender) {
 		case Origin:
 			if (received_msg[COMMAND] == REPLY_AXIS) {
-				printf("Received length of x and y axis from Origin\n");
+				printf("Received length of x axis from Origin\n");
+				set_axis(received_msg[DISTANCE], 0);		// y axis not in use any more		
 				// we need to do some magic stuff here to get both values from Origin
 			}
 			if (received_msg[COMMAND] == REPLY_DISTANCE) {

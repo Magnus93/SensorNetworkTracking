@@ -7,6 +7,7 @@ PROCESS(moron_process, "moron");
 
 Mote_t mote;
 uint32_t packet_data[2];	// [command, distance in cm] ie [REPLY_DISTANCE, 1992]
+int x_axis_rssi;
 
 static void recv_uc(struct unicast_conn *c, const linkaddr_t *from) {
 	
@@ -15,10 +16,22 @@ static void recv_uc(struct unicast_conn *c, const linkaddr_t *from) {
 
 	packet_data[COMMAND] = (received_data[COMMAND]);
 	packet_data[DISTANCE] = (received_data[DISTANCE]);
+
+	switch(packet_data[COMMAND]) {
+		case REQUEST_AXIS:
+			break;
+		case REQUEST_DISTANCE:
+			store_RSSI_value(received_rssi);
+			break;
+		default:
+			break;
+	}
+
+	
 	printf("unicast message received from %d.%d\n",from->u8[0], from->u8[1]);
 	printf("with data[COMMAND]: %ld and data[DISTANCE]: %ld\n", packet_data[COMMAND], packet_data[DISTANCE]);
 
-	store_RSSI_value(received_rssi);
+	
 }
 
 static void sent_uc(struct unicast_conn *c, int status, int num_tx) {
@@ -60,31 +73,20 @@ PROCESS_THREAD(moron_process, ev, data)
 			printf("Someone requested the distance\n");
 			// only transmitting to the sink for now! gather axis later
 			packet_data[COMMAND] = REPLY_DISTANCE;
-			packet_data[DISTANCE] = calculate_distance();
+			packet_data[DISTANCE] = calculate_distance(avg_rssi);
 			packetbuf_copyfrom(&packet_data, sizeof(uint32_t) * 2);
 			unicast_send(&uc, &addr);
 			packet_data[COMMAND] = WAIT_FOR_COMMAND;
 		}
 		else if (packet_data[COMMAND] == REQUEST_AXIS && get_type() == Origin) {
-			
-			// DRY DRY DRY!
-			// make Origo request the axis
-
-			// Handle Yaxis distance here
-			packet_data[COMMAND] = REQUEST_DISTANCE;
-			packet_data[DISTANCE] = 0;
-			packetbuf_copyfrom(packet_data, 2);
-			addr.u8[0] = Yaxis;
-			addr.u8[1] = 0;
-			unicast_send(&uc, &addr);
-
-			// Handle Xaxis distance here
+			printf("Someone requested the axis\n");
 			packet_data[COMMAND] = REQUEST_DISTANCE;
 			packet_data[DISTANCE] = 0;
 			packetbuf_copyfrom(packet_data, 2);
 			addr.u8[0] = Xaxis;
 			addr.u8[1] = 0;
 			unicast_send(&uc, &addr);
+			packet_data[COMMAND] = WAIT_FOR_COMMAND;
 			
 		}
 		//uint32_t sent_message = get_type();

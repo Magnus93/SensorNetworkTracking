@@ -5,7 +5,7 @@ uint32_t x_size = 0;				// length of x axis
 uint32_t y_size = 0;				// length of y axis
 int rssi_readings[RSSI_AMOUNT];		// store the last readings to calculate a moving average (is EWA better?)
 int rssi_index = 0;			// keeps track of the next location to store data in from rssi_readings
-int avg_rssi = 0;
+
 int accumulator = 0;
 
 
@@ -42,7 +42,7 @@ void calculate_RSSI_average() {
 
 // Increase decimals for better resolution????
 // See report for calculations of q
-uint32_t calculate_distance() {
+uint32_t calculate_distance(int rssi_val) {
 	int q = 0;				// quota * 10, (RSSI / DISTANCE) 
 	uint32_t distance = 0;  // distance in cm
 	switch (TX_POWER) {
@@ -62,7 +62,7 @@ uint32_t calculate_distance() {
 		q = -16;
 	}
 
-	distance = ((avg_rssi * 100) / q) * 10;		// q is scaled 10x to be able to utilize ints
+	distance = ((rssi_val * 100) / q) * 10;		// q is scaled 10x to be able to utilize ints
 	printf("distance: %ldcm, q: %d\n", distance, q);
 	return distance;
 }
