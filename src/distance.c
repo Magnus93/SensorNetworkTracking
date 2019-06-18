@@ -70,14 +70,21 @@ uint32_t calculate_distance(int rssi_val) {
 Position_t calculate_position(Distances_t dists) {
     uint64_t area, p;
     Position_t pos;
-    
     p = (dists.xaxis + x_size + dists.origin) / 2;
-    area = sqrt(p*(p-dists.xaxis)*(p-x_size)*(p-dists.origin));
-    pos.yPos = 2 * area / x_size ; 
-    pos.xPos = sqrt(dists.origin*dists.origin - pos.yPos*pos.yPos);
-    
+    // if triangle with x_axis is too small, use y_asix triangle
+    if (p < x_size) {
+		p = (dists.yaxis + y_size + dists.origin) / 2;
+		area = sqrt(p*(p-dists.yaxis)*(p-y_size)*(p-dists.origin));
+		pos.xPos = 2 * area / y_size ; 
+		pos.yPos = sqrt(dists.origin*dists.origin - pos.xPos*pos.xPos);
+	} else {
+		area = sqrt(p*(p-dists.xaxis)*(p-x_size)*(p-dists.origin));
+		pos.yPos = 2 * area / x_size ; 
+		pos.xPos = sqrt(dists.origin*dists.origin - pos.yPos*pos.yPos);
+	}
+  
     printf("Area: %ld\n", area);
-    printf("Permimiter: %ld\n", p);
+    printf("Semi-perimeter: %ld\n", p);
     print_dists(dists);
     print_pos(pos);
     return pos;
